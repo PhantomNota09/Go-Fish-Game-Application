@@ -72,6 +72,21 @@ class Server(object):
                 print(err)
             print("\n")
             print("\n")
+    def __print_command(self,command):
+        print(command)
+    
+    def __register_player(self,request):
+        if request[1] in self.players.keys():
+            return "FAILURE"
+        self.players[request[1]] = Player(request[1],request[2],request[3],request[4],request[5]);
+        return "SUCCESS"
+    
+    def __query_players(self):
+        res = ""
+        count = len(self.players);
+        res = str(count) + ":%" + json.dumps([ob.__dict__ for ob in self.players.values()])
+        return res
+    
 if __name__ == '__main__':
     server = Server()
     server.start()
