@@ -56,7 +56,12 @@ def __query_games():
     message, serverAdd = clientManagerSocket.recvfrom(1024)
     print(message.decode())
 
-def __end_game()
+def __end_game():
+    gameId = input("Enter the GameId: ")
+    request = f'end {gameId} {clientName}'
+    clientManagerSocket.sendto(request.encode(),(serverIp,serverPort))
+    message, serverAdd = clientManagerSocket.recvfrom(1024)
+    print(message.decode())
 
 def __de_register_player()
 
