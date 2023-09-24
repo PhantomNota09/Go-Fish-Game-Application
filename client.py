@@ -43,6 +43,13 @@ def __query_players():
     message, serverAdd = clientManagerSocket.recvfrom(1024)
     print(message.decode())
 
+def __start_game():
+    k = input("Enter no.of desired Players: ")
+    request = f'start game {clientName} {k}'
+    clientManagerSocket.sendto(request.encode(),(serverIp,serverPort))
+    message, serverAdd = clientManagerSocket.recvfrom(1024)
+    print(message.decode())
+
 def __display_options():
     print("***************************")
     print("***************************")
