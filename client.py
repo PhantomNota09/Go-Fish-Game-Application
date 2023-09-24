@@ -63,7 +63,12 @@ def __end_game():
     message, serverAdd = clientManagerSocket.recvfrom(1024)
     print(message.decode())
 
-def __de_register_player()
+def __de_register_player():
+    request = f'de-register {clientName}'
+    clientManagerSocket.sendto(request.encode(),(serverIp,serverPort))
+    message, serverAdd = clientManagerSocket.recvfrom(1024)
+    print(message.decode())
+    
 
 def __display_options():
     print("***************************")
