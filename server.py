@@ -18,3 +18,21 @@ class Game:
         self.id = id
         self.manager = manager
         self.players = players
+class Server(object):
+    
+    def __init__(self):
+        self.port = 15503
+        self.players = {}
+        self.games = {}
+        self.gamers = []
+    
+    def start(self):
+        serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,socket.IPPROTO_UDP)
+        serversocket.bind(("", self.port))
+        print('Server started running...')
+        #print(f'serverIp : {socket.gethostbyname(socket.gethostname())}')
+        print(f'server port = {self.port}')
+        self.__handle_connections(serversocket)
+if __name__ == '__main__':
+    server = Server()
+    server.start()
