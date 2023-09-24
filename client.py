@@ -50,6 +50,12 @@ def __start_game():
     message, serverAdd = clientManagerSocket.recvfrom(1024)
     print(message.decode())
 
+def __query_games():
+    request = f'query games'
+    clientManagerSocket.sendto(request.encode(),(serverIp,serverPort))
+    message, serverAdd = clientManagerSocket.recvfrom(1024)
+    print(message.decode())
+
 def __display_options():
     print("***************************")
     print("***************************")
