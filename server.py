@@ -86,6 +86,27 @@ class Server(object):
         count = len(self.players);
         res = str(count) + ":%" + json.dumps([ob.__dict__ for ob in self.players.values()])
         return res
+    def __start_game(self,request):
+        res = "SUCCESS:%"
+        if((int(request[3]) < 1 or int(request[3]) > 4) or (request[2] not in self.players.keys()) or (len(self.players) - len(self.gamers) - 1 < int(request[3]))):
+            return "FAILURE"
+        gameId = random.choices(string.ascii_uppercase + string.digits, k=4)
+        gameId = "".join(gameId)
+        potentialPlayers = list(set(self.players.keys())-set(self.gamers))
+        potentialPlayers.remove(request[2])
+        selectPlayers = random.choices(potentialPlayers,k=int(request[3]));
+        self.games[gameId] = Game(gameId,request[2],[x for x in selectPlayers])
+        selectPlayers.insert(0,request[2])
+        self.gamers.extend(selectPlayers)
+        res += gameId + ":%"
+        res += json.dumps([self.players.get(ob).__dict__ for ob in selectPlayers])
+        return res;
+    
+    def __query_games(self):
+        res = ""
+        count = len(self.games);
+        res = str(count) + ":%" + json.dumps([self.games.get(ob).__dict__ for ob in self.games])
+        return res
     
 if __name__ == '__main__':
     server = Server()
