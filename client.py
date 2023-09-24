@@ -11,6 +11,26 @@ clientName = ''
 clientIp = ""
 clientManagerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,socket.IPPROTO_UDP)
 
+def __get_input_params():
+    regex = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|"\
+            "2[0-4][0-9]|25[0-5])\\.){3}"\
+            "([0-9]|[1-9][0-9]|1[0-9][0-9]|"\
+            "2[0-4][0-9]|25[0-5])"
+    exp = re.compile(regex)
+    global clientIp, clientName, serverIp, serverPort, mPort, rPort, pPort
+    clientName, clientIp, serverIp, serverPort, mPort, rPort, pPort = input("Enter client Name, clientIp, severIP, server Port, m-port, r-port, p-port [space sepearated]:").rsplit(" ",7)
+    print(clientName)
+    print(serverIp)
+    print(serverPort)
+    print(mPort)
+    print(rPort)
+    print(pPort)
+    clientManagerSocket.bind(("",int(mPort)))
+    clientManagerSocket.settimeout(5)
+    if(re.search(exp, serverIp) and mPort.isdigit() and rPort.isdigit() and pPort.isdigit()):
+        return True
+    return False
+
 def __display_options():
     print("***************************")
     print("***************************")
