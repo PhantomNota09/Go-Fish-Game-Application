@@ -31,6 +31,12 @@ def __get_input_params():
         return True
     return False
 
+def __register_player():
+    request = f'register {clientName} {clientIp} {mPort} {rPort} {pPort}'
+    clientManagerSocket.sendto(request.encode(),(serverIp,serverPort))
+    message, serverAdd = clientManagerSocket.recvfrom(1024)
+    print(message.decode())
+
 def __display_options():
     print("***************************")
     print("***************************")
