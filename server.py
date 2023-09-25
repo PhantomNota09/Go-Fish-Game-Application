@@ -107,6 +107,21 @@ class Server(object):
         count = len(self.games);
         res = str(count) + ":%" + json.dumps([self.games.get(ob).__dict__ for ob in self.games])
         return res
+        
+    def __end_game(self,request):
+        if(request[1] in self.games.keys() and self.games.get(request[1]).manager == request[2]):
+            for x in self.games.get(request[1]).players:
+                self.gamers.remove(x)
+            self.gamers.remove(self.games.get(request[1]).manager)
+            self.games.pop(request[1])
+            return "SUCCESS"
+        return "FAILURE"
+    
+    def __de_register_player(self,request):
+        if(request[1] in self.gamers or request[1] not in self.players.keys()):
+            return "FAILURE"
+        self.players.pop(request[1])
+        return "SUCCESS"
     
 if __name__ == '__main__':
     server = Server()
