@@ -27,24 +27,45 @@ class Game:
         self.scores = {player.name:0 for player in self.players}
         hands = self.deck.deal_cards(self.players);
         return hands
-    
-    def verify_books(self, name, hand,hands): # checks a name/hand for wins
-        for card in set(hand):
-            if hand.count(card) == 4:
-                self.send_msg(f"verify_books:%{card}:%{hand}",self.get_player(name));
-                for i in range(4):
-                    hands[name].remove(card)
-                self.scores[name] += 1
-                #print('{} cleared the {}!'.format(name, card))
-    
-    def send_msg(self,message,player):
-        self.peerSocket.sendto(message.encode(),(player.ipv4,int(player.pport)))
-        time.sleep(0.5)
-        #message, serverAdd = self.peerSocket.recvfrom(1024)
-        return
-    
-    def make_choice(self,names,player,hands):
-        ask = random.choice([name for name in names if name != player])
-        card = random.choice(hands[player])
 
-  
+
+    
+    def start(self):
+        hands = self.deal_cards();
+        
+        
+        for key, value in hands.items():
+            self.send_msg(f"setup:%{self.players[0].name}:%{len(self.players)}:%{json.dumps([ob.__dict__ for ob in self.players])}",self.get_player(key));
+        for key, value in hands.items():
+            self.send_msg(f"deal_cards:%{value}",self.get_player(key));
+        
+        
+        for player in self.players:
+            self.verify_books(player.name,hands.get(player.name),hands);
+        idx = 1
+        prev_idx = 0
+        names = list(hands.keys())
+        while 1:
+            player = names[idx] #selecting the player
+            if prev_idx != idx:
+                self.send_msg(f"your_move",self.get_player(player));
+            if not hands[player]: # handles player not having a hand
+                if self.deck.cards:
+                    hands[player].append(self.deck.cards.pop())
+                else:
+                    prev_idx = idx
+                    idx += 1
+                    if idx >= len(names):
+                        idx = 0
+                    continue
+            ask = random.choice([name for name in names if name != player])
+            card = random.choice(hands[player])
+            self.send_msg(f"display:%Asking {ask} for the card {card}",self.get_player(player));
+            self.send_msg(f"ask:%{player}:%{card}",self.get_player(ask));
+            #print('{} asks for {} from {}.'.format(player, card, ask))
+            
+            success = False
+            while card in hands[ask]:
+                hands[ask].remove(card)
+                hands[player].append(card)
+                success = True
